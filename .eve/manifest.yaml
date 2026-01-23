@@ -1,0 +1,80 @@
+# Eve Horizon Manifest
+# This file defines your application's deployment configuration
+# Learn more: https://github.com/Incept5/eve-horizon
+
+# Project identifier - must be unique within your organization
+name: eve-starter
+
+# Default values applied across all environments
+defaults:
+  # Default environment when no --env flag is provided
+  env: test
+
+  # Default test harness for workflows
+  harness: mclaude
+
+# Environment definitions - where your application runs
+environments:
+  # Development/testing environment
+  test:
+    # persistent = long-lived environment (vs. ephemeral)
+    type: persistent
+
+    # Optional: Kubernetes namespace (defaults to project name)
+    # namespace: eve-starter-test
+
+    # Optional: Resource quotas and limits
+    # resources:
+    #   requests:
+    #     memory: "256Mi"
+    #     cpu: "100m"
+
+# Component definitions - the services that make up your application
+components:
+  # Simple HTTP API service
+  api:
+    # Container image (replace with your actual image)
+    image: ghcr.io/incept5/eve-starter-api:latest
+
+    # Service port configuration
+    port: 3000
+
+    # Environment variables passed to the container
+    env:
+      NODE_ENV: production
+
+    # Health check endpoint for readiness/liveness probes
+    healthcheck:
+      path: /health
+      # Optional: customize health check behavior
+      # initialDelaySeconds: 10
+      # periodSeconds: 5
+      # timeoutSeconds: 3
+      # failureThreshold: 3
+
+    # Optional: Resource limits for this component
+    # resources:
+    #   limits:
+    #     memory: "512Mi"
+    #     cpu: "500m"
+    #   requests:
+    #     memory: "256Mi"
+    #     cpu: "100m"
+
+# Optional: Workflows for CI/CD automation
+# workflows:
+#   deploy:
+#     steps:
+#       - name: Build
+#         run: docker build -t ghcr.io/incept5/eve-starter-api:$VERSION .
+#       - name: Push
+#         run: docker push ghcr.io/incept5/eve-starter-api:$VERSION
+#       - name: Deploy
+#         run: eve deploy --env test
+
+# Optional: Pipelines for orchestrating multiple jobs
+# pipelines:
+#   release:
+#     jobs:
+#       - workflow: deploy
+#         env: test
