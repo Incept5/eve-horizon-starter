@@ -16,11 +16,7 @@ cd my-project
 The template includes Eve skills for Claude Code and other AI coding agents:
 
 ```bash
-# Install the skills
-./bin/install-skills.sh
-
-# Or manually:
-cd eve-skillpacks && ./install.sh
+eve skills install
 ```
 
 ### 3. Start Your AI Coding Agent
@@ -52,7 +48,7 @@ That's it! Your project is ready.
 
 The setup skill automated:
 
-1. **CLI Installation**: `npm install -g @eve/cli`
+1. **CLI Installation**: `npm install -g @eve-horizon/cli`
 2. **Profile Creation**: `eve profile create staging --api-url https://api.eve-staging.incept5.dev`
 3. **Authentication**: Using your SSH key (auto-discovered from GitHub if needed)
 4. **Manifest Configuration**: Set project slug, name, description in `.eve/manifest.yaml`
@@ -68,6 +64,43 @@ Eve Horizon runs AI-powered jobs for your project:
 | **Code Review** | PR feedback, security scanning |
 | **Documentation** | Generate docs, changelogs, READMEs |
 | **Development** | Code scaffolding, refactoring, migrations |
+
+## Starter API & Tests
+
+The starter service exposes a small todos API:
+
+```bash
+GET    /health
+GET    /todos
+POST   /todos
+GET    /todos/:id
+PATCH  /todos/:id
+DELETE /todos/:id
+```
+
+OpenAPI is available at:
+
+```bash
+GET /openapi.json
+```
+
+Run the integration tests locally:
+
+```bash
+./scripts/integration-test.sh
+```
+
+Trigger the CI/CD pipeline:
+
+```bash
+eve pipeline run ci-cd-main --env staging
+```
+
+Validate required secrets and remediation hints:
+
+```bash
+eve project sync --validate-secrets
+```
 
 ## Next Steps
 
@@ -101,10 +134,10 @@ If you prefer to set up manually or need to troubleshoot, follow these steps.
 
 ```bash
 # Using npm
-npm install -g @eve/cli
+npm install -g @eve-horizon/cli
 
 # Using pnpm
-pnpm add -g @eve/cli
+pnpm add -g @eve-horizon/cli
 
 # Verify installation
 eve --help
@@ -156,11 +189,12 @@ Logged in
 Edit `.eve/manifest.yaml` with your project details:
 
 ```yaml
-component:
-  kind: app
-  slug: my-project
-  name: My Project
-  description: A brief description of your project
+schema: eve/compose/v2
+project: my-project
+services:
+  api:
+    build:
+      context: apps/api
 ```
 
 ### Set Up Your Git Remote

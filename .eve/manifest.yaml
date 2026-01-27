@@ -2,7 +2,7 @@
 # This file defines your application's deployment configuration
 # Learn more: https://github.com/Incept5/eve-horizon
 
-schema: eve/compose/v1
+schema: eve/compose/v2
 project: eve-starter
 
 # Default values applied across environments
@@ -11,15 +11,24 @@ x-eve:
     env: test
     hints:
       harness: mclaude
+  requires:
+    secrets:
+      - name: GITHUB_TOKEN
+        description: Required for PR creation and repo access
+        remediation: Run `eve secrets set GITHUB_TOKEN <your-token>`
 
 # Environment definitions - where your application runs
 environments:
   test:
     type: persistent
+  staging:
+    type: persistent
 
 # Service definitions - the services that make up your application
 services:
   api:
+    build:
+      context: apps/api
     image: ghcr.io/incept5/eve-starter-api:latest
     ports: [3000]
     environment:
@@ -30,21 +39,21 @@ services:
       ingress:
         public: true
         port: 3000
+      api_spec:
+        spec_url: /openapi.json
 
-# Optional: Workflows for CI/CD automation
-# workflows:
-#   deploy:
-#     steps:
-#       - name: Build
-#         run: docker build -t ghcr.io/incept5/eve-starter-api:$VERSION .
-#       - name: Push
-#         run: docker push ghcr.io/incept5/eve-starter-api:$VERSION
-#       - name: Deploy
-#         run: eve env deploy test
-
-# Optional: Pipelines for orchestrating multiple jobs
-# pipelines:
-#   release:
-#     steps:
-#       - name: deploy
-#         action: { type: deploy }
+pipelines:
+  ci-cd-main:
+    triggers:
+      - event: push
+        branch: main
+    steps:
+      - name: integration-tests
+        action:
+          type: run
+          command: ./scripts/integration-test.sh
+      - name: deploy-staging
+        depends_on: [integration-tests]
+        action:
+          type: deploy
+          environment: staging

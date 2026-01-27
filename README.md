@@ -72,6 +72,25 @@ my-project/
 └── README.md
 ```
 
+## API Overview
+
+The starter API exposes a minimal todos service:
+
+```bash
+GET    /health
+GET    /todos
+POST   /todos
+GET    /todos/:id
+PATCH  /todos/:id
+DELETE /todos/:id
+```
+
+OpenAPI is served at:
+
+```bash
+GET /openapi.json
+```
+
 ## Common Commands
 
 After setup, you can use these commands:
@@ -82,6 +101,15 @@ eve auth status
 
 # Sync your Claude/Codex OAuth tokens to Eve
 eve auth sync
+
+# Run integration tests
+./scripts/integration-test.sh
+
+# Run the CI/CD pipeline
+eve pipeline run ci-cd-main --env staging
+
+# Validate required secrets and remediation hints
+eve project sync --validate-secrets
 
 # Create a job
 eve jobs create --prompt "Review the codebase and suggest improvements"
@@ -107,7 +135,7 @@ If you prefer to set up manually instead of using the AI skill:
 ### Install CLI
 
 ```bash
-npm install -g @eve/cli
+npm install -g @eve-horizon/cli
 ```
 
 ### Create Profile
@@ -135,18 +163,19 @@ eve auth login
 Edit `.eve/manifest.yaml`:
 
 ```yaml
-version: "1"
-project:
-  slug: my-project
-  name: My Project
-  description: What this project does
+schema: eve/compose/v2
+project: my-project
+services:
+  api:
+    build:
+      context: apps/api
 ```
 
 ## Troubleshooting
 
 ### "eve: command not found"
 
-Install the CLI: `npm install -g @eve/cli`
+Install the CLI: `npm install -g @eve-horizon/cli`
 
 ### "Not authenticated"
 
