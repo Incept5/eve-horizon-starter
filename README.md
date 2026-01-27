@@ -13,10 +13,11 @@ git clone https://github.com/Incept5/eve-horizon-starter my-project
 cd my-project
 ```
 
-### 2. Install Eve Skills
+### 2. Install Eve CLI & Skills
 
 ```bash
-./bin/install-skills.sh
+npm install -g @eve-horizon/cli
+eve skills install
 ```
 
 This installs skills that help AI coding agents work with Eve Horizon.
@@ -63,11 +64,11 @@ The AI will:
 my-project/
 ├── .eve/
 │   └── manifest.yaml    # Eve project configuration
-├── bin/
-│   └── install-skills.sh
 ├── docs/
 │   └── GETTING-STARTED.md
 ├── skills.txt           # Skillpack references
+├── AGENTS.md            # Agent instructions (universal)
+├── CLAUDE.md            # Claude Code redirect
 └── README.md
 ```
 
