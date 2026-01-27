@@ -51,3 +51,12 @@ After `eve skills install`, agents have access to:
 2. Test locally: `docker build -t api apps/api && docker run -p 3000:3000 api`
 3. Deploy: `./scripts/deploy.sh test`
 4. Verify: `curl http://api.eve-starter-test.lvh.me/health`
+
+## Keep AGENTS.md Current (Critical)
+
+This file must be rewritten to match the actual product domain and tech stack once the user decides what they are building. The starter API/UI is disposable: expect to replace or remove it entirely. When the real project direction is chosen, document:
+
+- The domain and core product goals.
+- The chosen stack and architecture.
+- What starter code was removed or replaced, and what (if anything) was kept.
+- The new local dev and deploy workflow.

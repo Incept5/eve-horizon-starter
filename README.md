@@ -72,6 +72,10 @@ my-project/
 └── README.md
 ```
 
+## Customize This Starter (Read First)
+
+This repo is a starting point. Once you pick your real domain and tech stack, treat the sample API/UI as disposable and replace it. The source of truth for how agents should work is `AGENTS.md`—keep it updated as the project evolves.
+
 ## API Overview
 
 The starter API exposes a minimal todos service:
