@@ -76,6 +76,8 @@ my-project/
 
 This repo is a starting point. Once you pick your real domain and tech stack, treat the sample API/UI as disposable and replace it. The source of truth for how agents should work is `AGENTS.md`—keep it updated as the project evolves.
 
+Local development is intended to run via Docker Compose, and then be transposed into `.eve/manifest.yaml` for deployment to a remote Eve cluster (staging by default).
+
 ## API Overview
 
 The starter API exposes a minimal todos service:
@@ -115,11 +117,14 @@ eve auth sync
 # Run integration tests
 ./scripts/integration-test.sh
 
-# Run the API with UI locally
+# Run the API with UI locally (Compose)
+docker compose up --build
+
+# Run the API with UI locally (direct)
 cd apps/api
 npm start
 
-# Run the CI/CD pipeline
+# Run the CI/CD pipeline (staging)
 eve pipeline run ci-cd-main --env staging
 
 # Validate required secrets and remediation hints

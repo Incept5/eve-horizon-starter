@@ -96,14 +96,20 @@ Run the integration tests locally:
 ./scripts/integration-test.sh
 ```
 
-Run the API (and UI) locally:
+Run the API (and UI) locally with Docker Compose:
+
+```bash
+docker compose up --build    # http://localhost:3000
+```
+
+Or run directly:
 
 ```bash
 cd apps/api
 npm start
 ```
 
-Trigger the CI/CD pipeline:
+Deploy to staging (default target):
 
 ```bash
 eve pipeline run ci-cd-main --env staging
