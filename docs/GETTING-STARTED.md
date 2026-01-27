@@ -84,10 +84,23 @@ OpenAPI is available at:
 GET /openapi.json
 ```
 
+The React + Tailwind UI is served at:
+
+```bash
+GET /
+```
+
 Run the integration tests locally:
 
 ```bash
 ./scripts/integration-test.sh
+```
+
+Run the API (and UI) locally:
+
+```bash
+cd apps/api
+npm start
 ```
 
 Trigger the CI/CD pipeline:

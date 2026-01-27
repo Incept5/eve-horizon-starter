@@ -91,6 +91,12 @@ OpenAPI is served at:
 GET /openapi.json
 ```
 
+The React + Tailwind UI is served from the same container at:
+
+```bash
+GET /
+```
+
 ## Common Commands
 
 After setup, you can use these commands:
@@ -104,6 +110,10 @@ eve auth sync
 
 # Run integration tests
 ./scripts/integration-test.sh
+
+# Run the API with UI locally
+cd apps/api
+npm start
 
 # Run the CI/CD pipeline
 eve pipeline run ci-cd-main --env staging

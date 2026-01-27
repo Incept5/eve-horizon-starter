@@ -1,4 +1,6 @@
+import fs from 'fs/promises';
 import http from 'http';
+import path from 'path';
 import { fileURLToPath } from 'url';
 
 const PORT = process.env.PORT || 3000;
@@ -7,6 +9,8 @@ const store = {
   nextId: 1,
   todos: new Map(),
 };
+
+const PUBLIC_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
 
 const openapi = {
   openapi: '3.0.0',
@@ -178,6 +182,48 @@ const sendEmpty = (res, statusCode) => {
   res.end();
 };
 
+const contentTypeFor = (filePath) => {
+  const ext = path.extname(filePath).toLowerCase();
+  switch (ext) {
+    case '.html':
+      return 'text/html; charset=utf-8';
+    case '.js':
+      return 'text/javascript; charset=utf-8';
+    case '.css':
+      return 'text/css; charset=utf-8';
+    case '.svg':
+      return 'image/svg+xml';
+    case '.png':
+      return 'image/png';
+    case '.ico':
+      return 'image/x-icon';
+    case '.json':
+      return 'application/json; charset=utf-8';
+    default:
+      return 'application/octet-stream';
+  }
+};
+
+const safeJoin = (baseDir, requestPath) => {
+  const normalized = path.normalize(path.join(baseDir, requestPath));
+  if (!normalized.startsWith(baseDir)) {
+    return null;
+  }
+  return normalized;
+};
+
+const serveStatic = async (res, filePath) => {
+  try {
+    const data = await fs.readFile(filePath);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', contentTypeFor(filePath));
+    res.end(data);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const readJsonBody = async (req) => {
   let raw = '';
   for await (const chunk of req) {
@@ -345,6 +391,33 @@ export const createServer = () =>
       }
       await handleTodoItem(req, res, id);
       return;
+    }
+
+    if (req.method === 'GET') {
+      const isRoot = path === '/';
+      const isAsset =
+        path.startsWith('/assets/') ||
+        path.endsWith('.js') ||
+        path.endsWith('.css') ||
+        path.endsWith('.svg') ||
+        path.endsWith('.png') ||
+        path.endsWith('.ico') ||
+        path.endsWith('.json');
+
+      if (isRoot || isAsset) {
+        const requestPath = isRoot ? 'index.html' : path.slice(1);
+        const filePath = safeJoin(PUBLIC_DIR, requestPath);
+        if (filePath && (await serveStatic(res, filePath))) {
+          return;
+        }
+        sendJson(res, 404, { error: 'Not Found' });
+        return;
+      }
+
+      const fallbackPath = safeJoin(PUBLIC_DIR, 'index.html');
+      if (fallbackPath && (await serveStatic(res, fallbackPath))) {
+        return;
+      }
     }
 
     sendJson(res, 404, { error: 'Not Found' });
