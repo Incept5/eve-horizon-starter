@@ -32,7 +32,7 @@ services:
     environment:
       NODE_ENV: production
     healthcheck:
-      path: /health
+      test: curl -f http://localhost:3000/health || exit 1
     x-eve:
       ingress:
         public: true
