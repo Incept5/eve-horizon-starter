@@ -1,6 +1,8 @@
 # Eve Horizon Starter
 
-Start building with Eve Horizon in 5 minutes. Clone, install skills, let AI configure everything.
+Build self-healing, self-improving applications with **Eve Horizon** — the agentic-native PaaS.
+
+This template gets you started in 5 minutes. Clone, install skills, let AI configure everything.
 
 ## Quick Start
 
@@ -46,14 +48,14 @@ The AI will:
 
 ## What Is Eve Horizon?
 
-Eve Horizon is a platform for running AI-powered jobs. It can help with:
+**Agentic-Native PaaS** — A platform for building and deploying self-healing, self-improving applications.
 
-| Category | Examples |
-|----------|----------|
-| **CI/CD** | Automated tests, builds, deployments |
-| **Code Review** | PR feedback, security scanning |
-| **Documentation** | Generate docs, changelogs, READMEs |
-| **Development** | Code scaffolding, refactoring, migrations |
+| Capability | What It Means |
+|------------|---------------|
+| **Self-healing apps** | AI agents monitor, diagnose, and fix issues automatically |
+| **Self-improving systems** | Continuous optimization through agent-driven feedback loops |
+| **Native agentic apps** | Build apps where AI agents are first-class runtime components |
+| **Agent-first API** | Claude, Codex, and custom agents use the same API as humans |
 
 ## Project Structure
 
