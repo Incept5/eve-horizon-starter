@@ -13,9 +13,7 @@ x-eve:
       harness: mclaude
   requires:
     secrets:
-      - name: GITHUB_TOKEN
-        description: Required for PR creation and repo access
-        remediation: Run `eve secrets set GITHUB_TOKEN <your-token>`
+      - GITHUB_TOKEN
 
 # Environment definitions - where your application runs
 environments:
@@ -44,16 +42,21 @@ services:
 
 pipelines:
   ci-cd-main:
-    triggers:
-      - event: push
+    trigger:
+      github:
+        event: push
         branch: main
     steps:
       - name: integration-tests
-        action:
-          type: run
-          command: ./scripts/integration-test.sh
-      - name: deploy-staging
+        script:
+          run: ./scripts/integration-test.sh
+          timeout: 1800
+      - name: release
         depends_on: [integration-tests]
         action:
+          type: release
+      - name: deploy-staging
+        depends_on: [release]
+        action:
           type: deploy
-          environment: staging
+          env_name: staging
