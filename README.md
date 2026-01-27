@@ -2,27 +2,24 @@
 
 Build self-healing, self-improving applications with **Eve Horizon** — the agentic-native PaaS.
 
-This template gets you started in 5 minutes. Clone, install skills, let AI configure everything.
+This template gets you started in 5 minutes. One command, AI configures everything.
 
 ## Quick Start
 
-### 1. Clone & Rename
+### 1. Initialize Your Project
 
 ```bash
-git clone https://github.com/Incept5/eve-horizon-starter my-project
+# Install the Eve CLI
+npm install -g @eve-horizon/cli
+
+# Create a new project from this template
+eve init my-project
 cd my-project
 ```
 
-### 2. Install Eve CLI & Skills
+This downloads the template, sets up a fresh git repo, and installs skills.
 
-```bash
-npm install -g @eve-horizon/cli
-eve skills install
-```
-
-This installs skills that help AI coding agents work with Eve Horizon.
-
-### 3. Start Your AI Agent
+### 2. Start Your AI Agent
 
 Open the project in Claude Code, Cursor, or your preferred AI coding agent:
 
@@ -30,20 +27,38 @@ Open the project in Claude Code, Cursor, or your preferred AI coding agent:
 claude  # or cursor, etc.
 ```
 
-### 4. Run Setup
+### 3. Run Setup
 
 Ask your AI agent:
 
 > "Run the eve-new-project-setup skill"
 
 The AI will:
-- Install the Eve CLI
 - Set up your profile for the staging environment
 - Authenticate you (using your GitHub SSH key)
 - Configure your project manifest
 - Help you set up your own Git remote
 
 **That's it!** Your project is ready to use Eve Horizon.
+
+### Alternative: Clone Directly
+
+If you prefer to clone this repo directly instead of using `eve init`:
+
+```bash
+git clone https://github.com/Incept5/eve-horizon-starter my-project
+cd my-project
+
+# Remove template history and start fresh
+rm -rf .git
+git init
+git add -A
+git commit -m "Initial commit"
+
+# Install CLI and skills
+npm install -g @eve-horizon/cli
+eve skills install
+```
 
 ---
 
