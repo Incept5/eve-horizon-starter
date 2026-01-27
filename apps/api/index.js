@@ -205,11 +205,13 @@ const contentTypeFor = (filePath) => {
 };
 
 const safeJoin = (baseDir, requestPath) => {
-  const normalized = path.normalize(path.join(baseDir, requestPath));
-  if (!normalized.startsWith(baseDir)) {
-    return null;
+  const resolvedBase = path.resolve(baseDir);
+  const resolvedPath = path.resolve(resolvedBase, requestPath);
+  const relative = path.relative(resolvedBase, resolvedPath);
+  if (relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))) {
+    return resolvedPath;
   }
-  return normalized;
+  return null;
 };
 
 const serveStatic = async (res, filePath) => {
