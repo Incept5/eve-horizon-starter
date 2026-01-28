@@ -6,7 +6,7 @@ This is an Eve-compatible starter project. Agents working in this repo should fo
 
 - **Purpose**: Minimal starter template for Eve-compatible projects
 - **Stack**: Staging-first Eve Horizon with Docker Compose for local dev
-- **Skills**: eve-se skillpack installed via skills.txt
+- **Skills**: eve-se skillpack installed via `eve init` or `eve skills install`
 
 Local dev runs via Docker Compose and is then translated into `.eve/manifest.yaml` for deployment to the remote staging cluster.
 
@@ -14,9 +14,9 @@ Local dev runs via Docker Compose and is then translated into `.eve/manifest.yam
 
 | File | Purpose |
 |------|---------|
-| `.eve/manifest.yaml` | Deployment configuration (components, envs) |
+| `.eve/manifest.yaml` | Deployment configuration (services, envs) |
 | `skills.txt` | Skill sources for agents |
-| `.eve/hooks/on-clone.sh` | Auto-installs skills on clone |
+| `.eve/hooks/on-clone.sh` | Auto-installs skills when Eve workers clone |
 | `apps/api/` | Example API service |
 | `scripts/` | Helper scripts for setup and deploy |
 
@@ -29,8 +29,7 @@ docker compose up --build   # http://localhost:3000
 
 ### Deploy to staging
 ```bash
-./scripts/setup.sh
-./scripts/deploy.sh staging
+eve pipeline run deploy --env staging
 ```
 
 ### Check deployment
@@ -38,24 +37,27 @@ docker compose up --build   # http://localhost:3000
 eve env status staging
 ```
 
-### Add a new component
+### Add a new service
 1. Add Dockerfile in `apps/<name>/`
-2. Add component to `.eve/manifest.yaml`
-3. Run `eve env deploy staging --tag <tag>`
+2. Add service to `.eve/manifest.yaml`
+3. Run `eve pipeline run deploy --env staging`
 
 ## Skills Available
 
-After `eve skills install`, agents have access to:
-- eve-se/bootstrap - Org/project setup
-- eve-se/manifest-authoring - Manifest editing
-- eve-se/deploy-debugging - Troubleshoot deployments
-- eve-se/pipelines-workflows - CI/CD configuration
+Skills are installed automatically by `eve init`. Key skills:
+- **eve-new-project-setup** - Initial profile/auth/manifest configuration
+- **eve-manifest-authoring** - Manifest editing guidance
+- **eve-deploy-debugging** - Troubleshoot deployments
+- **eve-pipelines-workflows** - CI/CD configuration
+- **eve-job-lifecycle** - Create and manage Eve jobs
+
+Run `openskills list` to see all installed skills.
 
 ## Development Workflow
 
 1. Make changes to code
 2. Test locally: `docker compose up --build`
-3. Deploy: `./scripts/deploy.sh staging`
+3. Deploy: `eve pipeline run deploy --env staging`
 4. Verify: `eve env status staging`
 
 ## Keep AGENTS.md Current (Critical)
