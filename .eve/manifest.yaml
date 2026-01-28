@@ -68,3 +68,40 @@ pipelines:
         action:
           type: deploy
           env_name: staging
+
+  # Remediation pipeline - triggers on job failures
+  remediation:
+    trigger:
+      system:
+        event: job.failed
+    steps:
+      - name: analyze
+        agent:
+          prompt: "Analyze the failure and propose a fix. Check logs, identify root cause, and suggest code changes."
+      - name: create-pr
+        depends_on: [analyze]
+        action:
+          type: create-pr
+          head: remediation/${job_id}
+          base: main
+          title: "fix: automated remediation for job failure"
+          dry_run: false
+
+  # Deploy test environment pipeline
+  deploy-test:
+    steps:
+      - name: deploy
+        action:
+          type: deploy
+          env_name: test
+
+# Workflows - agent-based operations that require analysis
+workflows:
+  log-audit:
+    trigger:
+      cron: "0 * * * *"  # Hourly
+    description: "Audit application logs for errors and trigger remediation if needed"
+    steps:
+      - name: audit
+        agent:
+          prompt: "Check the application logs for errors in the last hour. If critical errors are found, create a remediation plan."
