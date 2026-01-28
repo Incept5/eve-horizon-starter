@@ -24,6 +24,8 @@ registry:
     token_secret: GITHUB_TOKEN
 
 # Environment definitions - where your application runs
+# Deploy using: eve env deploy <env-name> --ref <git-sha-or-branch>
+# Or via pipeline: eve pipeline run <pipeline-name> --env <env-name>
 environments:
   test:
     type: persistent
@@ -49,6 +51,9 @@ services:
         spec_url: /openapi.json
 
 pipelines:
+  # CI/CD pipeline triggered on push to main
+  # Runs tests, creates release, and deploys to staging
+  # The pipeline handles git ref automatically from the triggering commit
   ci-cd-main:
     trigger:
       github:
@@ -88,6 +93,7 @@ pipelines:
           dry_run: false
 
   # Deploy test environment pipeline
+  # For direct deployment use: eve env deploy test --ref <git-sha-or-branch>
   deploy-test:
     steps:
       - name: deploy

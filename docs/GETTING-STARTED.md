@@ -110,11 +110,50 @@ cd apps/api
 npm start
 ```
 
-Deploy to staging (default target):
+Deploy to environments:
 
 ```bash
+# Direct deployment (requires --ref with git SHA or branch)
+eve env deploy test --ref main
+eve env deploy staging --ref abc123
+
+# Via pipeline (recommended for CI/CD)
 eve pipeline run deploy --env staging
 ```
+
+**Note**: When using `eve env deploy`, the `--ref` parameter is required and must be a valid git commit SHA or branch name.
+
+## Deployment Patterns
+
+### Direct Deployment
+
+Use `eve env deploy` to deploy directly to an environment:
+
+```bash
+eve env deploy test --ref main      # Deploy test using main branch
+eve env deploy staging --ref abc123  # Deploy staging using specific commit
+```
+
+The `--ref` parameter is **required** and accepts:
+- Git commit SHA (e.g., `abc123`)
+- Branch name (e.g., `main`, `feature-xyz`)
+
+### Promotion Flow (test → staging)
+
+When environments have pipelines configured (see `.eve/manifest.yaml`), use this pattern:
+
+```bash
+# 1. Build and deploy to test environment
+eve env deploy test --ref abc123
+
+# 2. Get release information after successful build
+eve release resolve v1.2.3
+
+# 3. Promote to staging with the same ref and release ID
+eve env deploy staging --ref abc123 --inputs '{"release_id":"rel_xxx"}'
+```
+
+This ensures you build artifacts once in test, then promote the same artifacts to staging without rebuilding.
 
 ## Next Steps
 
@@ -254,6 +293,10 @@ git push -u origin main
 | `eve auth sync` | Sync local OAuth tokens to Eve |
 | `eve org list` | List your organizations |
 | `eve project list` | List projects in your org |
+| `eve env deploy <env> --ref <sha>` | Deploy to environment (requires git ref) |
+| `eve env status <env>` | Check environment status |
+| `eve release resolve <version>` | Get release information |
+| `eve pipeline run <name> --env <env>` | Run a pipeline |
 | `eve secrets list` | List project secrets |
 | `eve secrets set KEY VALUE` | Set a project secret |
 | `eve jobs create --prompt "..."` | Create a new job |

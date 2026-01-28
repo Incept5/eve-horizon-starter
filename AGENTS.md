@@ -27,9 +27,36 @@ Local dev runs via Docker Compose and is then translated into `.eve/manifest.yam
 docker compose up --build   # http://localhost:3000
 ```
 
-### Deploy to staging
+### Deploy to environments
+
+**Via pipeline** (recommended for CI/CD):
 ```bash
 eve pipeline run deploy --env staging
+```
+
+**Direct deployment** (requires explicit git ref):
+```bash
+# Deploy to test environment with git SHA or branch
+eve env deploy test --ref abc123
+eve env deploy test --ref main
+
+# Deploy to staging with git SHA or branch
+eve env deploy staging --ref abc123
+eve env deploy staging --ref main
+```
+
+**Note**: The `--ref` parameter is required and must be a valid git SHA or branch name.
+
+### Promotion flow (test → staging)
+```bash
+# 1. Build and deploy to test
+eve env deploy test --ref abc123
+
+# 2. Get release information
+eve release resolve v1.2.3
+
+# 3. Promote to staging with release reference
+eve env deploy staging --ref abc123 --inputs '{"release_id":"rel_xxx"}'
 ```
 
 ### Check deployment
@@ -40,7 +67,7 @@ eve env status staging
 ### Add a new service
 1. Add Dockerfile in `apps/<name>/`
 2. Add service to `.eve/manifest.yaml`
-3. Run `eve pipeline run deploy --env staging`
+3. Deploy: `eve env deploy staging --ref main` or `eve pipeline run deploy --env staging`
 
 ## Skills Available
 
@@ -57,7 +84,7 @@ Run `openskills list` to see all installed skills.
 
 1. Make changes to code
 2. Test locally: `docker compose up --build`
-3. Deploy: `eve pipeline run deploy --env staging`
+3. Deploy: `eve env deploy staging --ref main` (or use `eve pipeline run deploy --env staging`)
 4. Verify: `eve env status staging`
 
 ## Keep AGENTS.md Current (Critical)

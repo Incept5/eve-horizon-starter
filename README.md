@@ -139,6 +139,10 @@ docker compose up --build
 cd apps/api
 npm start
 
+# Deploy to environments (requires --ref with git SHA or branch)
+eve env deploy test --ref main
+eve env deploy staging --ref abc123
+
 # Run the CI/CD pipeline (staging)
 eve pipeline run ci-cd-main --env staging
 
@@ -154,6 +158,43 @@ eve jobs list
 # Check job status
 eve jobs get <job-id>
 ```
+
+## Deployment & Promotion Flow
+
+The manifest configures pipelines for automated deployments. You can also deploy directly:
+
+### Direct Deployment
+
+Deploy to an environment using `eve env deploy` (requires `--ref` with a git SHA or branch):
+
+```bash
+# Deploy to test
+eve env deploy test --ref main
+eve env deploy test --ref abc123
+
+# Deploy to staging
+eve env deploy staging --ref main
+eve env deploy staging --ref def456
+```
+
+**Note**: The `--ref` parameter is required and must be a valid git commit SHA or branch name.
+
+### Promotion Flow (test → staging)
+
+The typical promotion workflow when using pipelines:
+
+```bash
+# 1. Build and deploy to test environment
+eve env deploy test --ref abc123
+
+# 2. Get release information after build
+eve release resolve v1.2.3
+
+# 3. Promote to staging with the same ref and release ID
+eve env deploy staging --ref abc123 --inputs '{"release_id":"rel_xxx"}'
+```
+
+This pattern allows you to build once in test, then promote the same artifacts to staging.
 
 ## Next Steps
 
