@@ -1,40 +1,37 @@
 # Getting Started with Eve Horizon
 
-> Clone, load skills, let AI configure everything
+> One command to start, AI configures everything
 
 ## Quick Start (5 minutes)
 
-### 1. Clone the Template
+### 1. Initialize Your Project
 
 ```bash
-git clone https://github.com/Incept5/eve-horizon-starter my-project
+# Install the Eve CLI
+npm install -g @eve-horizon/cli
+
+# Create a new project
+eve init my-project
 cd my-project
 ```
 
-### 2. Install Eve Skills
+This downloads the starter template, sets up a fresh git repo, and installs skills automatically.
 
-The template includes Eve skills for Claude Code and other AI coding agents:
+### 2. Start Your AI Coding Agent
 
-```bash
-eve skills install
-```
-
-### 3. Start Your AI Coding Agent
-
-Open the project in your AI coding agent (Claude Code, Cursor, etc.):
+Open the project in Claude Code, Cursor, or your preferred AI coding agent:
 
 ```bash
-claude  # or your preferred agent
+claude  # or cursor, etc.
 ```
 
-### 4. Run the Setup Skill
+### 3. Run the Setup Skill
 
-Simply ask your AI agent:
+Ask your AI agent:
 
 > "Run the eve-new-project-setup skill"
 
 The AI will:
-- Install the Eve CLI if needed
 - Set up your staging profile and authentication
 - Interview you about your project
 - Configure the Eve manifest
@@ -46,13 +43,17 @@ That's it! Your project is ready.
 
 ## What Just Happened?
 
-The setup skill automated:
+The `eve init` command:
+1. Downloaded the starter template from GitHub
+2. Stripped template git history and created a fresh repo
+3. Installed Eve skills for your AI coding agent
+4. Created an initial commit
 
-1. **CLI Installation**: `npm install -g @eve-horizon/cli`
-2. **Profile Creation**: `eve profile create staging --api-url https://api.eve-staging.incept5.dev`
-3. **Authentication**: Using your SSH key (auto-discovered from GitHub if needed)
-4. **Manifest Configuration**: Set project slug, name, description in `.eve/manifest.yaml`
-5. **Git Setup**: Changed remote from template to your own repo
+The setup skill then automated:
+1. **Profile Creation**: `eve profile create staging --api-url https://api.eve-staging.incept5.dev`
+2. **Authentication**: Using your SSH key (auto-discovered from GitHub if needed)
+3. **Manifest Configuration**: Set project slug, name, description in `.eve/manifest.yaml`
+4. **Git Remote**: Configured your own repository
 
 ## What Can Eve Horizon Do?
 
@@ -112,13 +113,7 @@ npm start
 Deploy to staging (default target):
 
 ```bash
-eve pipeline run ci-cd-main --env staging
-```
-
-Validate required secrets and remediation hints:
-
-```bash
-eve project sync --validate-secrets
+eve pipeline run deploy --env staging
 ```
 
 ## Next Steps
@@ -135,6 +130,29 @@ eve jobs create --prompt "Review the codebase and suggest improvements"
 # Check job status
 eve jobs list
 ```
+
+---
+
+## Alternative: Clone Directly
+
+If you prefer to clone the template directly instead of using `eve init`:
+
+```bash
+git clone https://github.com/Incept5/eve-horizon-starter my-project
+cd my-project
+
+# Remove template history and start fresh
+rm -rf .git
+git init
+git add -A
+git commit -m "Initial commit"
+
+# Install CLI and skills
+npm install -g @eve-horizon/cli
+eve skills install
+```
+
+Then start your AI agent and run the eve-new-project-setup skill.
 
 ---
 
@@ -219,7 +237,8 @@ services:
 ### Set Up Your Git Remote
 
 ```bash
-git remote set-url origin git@github.com:YourOrg/my-project.git
+git remote add origin git@github.com:YourOrg/my-project.git
+git push -u origin main
 ```
 
 ---
@@ -237,19 +256,27 @@ git remote set-url origin git@github.com:YourOrg/my-project.git
 | `eve project list` | List projects in your org |
 | `eve secrets list` | List project secrets |
 | `eve secrets set KEY VALUE` | Set a project secret |
-| `eve job create --description "..."` | Create a new job |
-| `eve job list` | List jobs in your project |
-| `eve job list --phase active` | List active jobs |
-| `eve job ready` | Show schedulable jobs |
-| `eve job show <id>` | View job details |
-| `eve job follow <id>` | Stream job logs |
-| `eve job wait <id>` | Wait for job completion |
-| `eve job result <id>` | Get job results |
+| `eve jobs create --prompt "..."` | Create a new job |
+| `eve jobs list` | List jobs in your project |
+| `eve jobs list --phase active` | List active jobs |
+| `eve jobs ready` | Show schedulable jobs |
+| `eve jobs show <id>` | View job details |
+| `eve jobs follow <id>` | Stream job logs |
+| `eve jobs wait <id>` | Wait for job completion |
+| `eve jobs result <id>` | Get job results |
 | `eve harness list` | List available AI harnesses |
 
 ---
 
 ## Troubleshooting
+
+### "eve: command not found"
+
+Install the CLI:
+
+```bash
+npm install -g @eve-horizon/cli
+```
 
 ### "No registered SSH key found"
 
@@ -287,8 +314,8 @@ The job is waiting to be scheduled. Check:
 View the logs and diagnostics:
 
 ```bash
-eve job logs MyProj-abc123
-eve job diagnose MyProj-abc123
+eve jobs logs <job-id>
+eve jobs diagnose <job-id>
 ```
 
 ### Wrong Profile Active
@@ -319,10 +346,10 @@ eve system health
 eve --help
 
 # Command help
-eve job --help
+eve jobs --help
 
 # Subcommand help
-eve job create --help
+eve jobs create --help
 ```
 
 ### JSON Output
@@ -330,6 +357,6 @@ eve job create --help
 Add `--json` to any command for machine-readable output:
 
 ```bash
-eve job list --json
+eve jobs list --json
 eve auth status --json
 ```
