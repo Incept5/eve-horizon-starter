@@ -163,6 +163,10 @@ After setup, try these:
 # Sync your Claude/Codex OAuth tokens
 eve auth sync
 
+# Import secrets from a file (org/user/project scope)
+cp secrets.env.example secrets.env
+eve secrets import --org org_xxx --file ./secrets.env
+
 # Create your first job
 eve jobs create --prompt "Review the codebase and suggest improvements"
 
@@ -299,6 +303,7 @@ git push -u origin main
 | `eve pipeline run <name> --env <env>` | Run a pipeline |
 | `eve secrets list` | List project secrets |
 | `eve secrets set KEY VALUE` | Set a project secret |
+| `eve secrets import --file ./secrets.env` | Import secrets from a file (use `--org`, `--user`, or `--project`) |
 | `eve jobs create --prompt "..."` | Create a new job |
 | `eve jobs list` | List jobs in your project |
 | `eve jobs list --phase active` | List active jobs |
@@ -308,6 +313,29 @@ git push -u origin main
 | `eve jobs wait <id>` | Wait for job completion |
 | `eve jobs result <id>` | Get job results |
 | `eve harness list` | List available AI harnesses |
+
+---
+
+## Harness Auth Quick Reference
+
+Choose the harness you want to run and set the matching API key(s).
+Recommended: store keys at **org** scope so all projects can use them.
+
+```bash
+# Batch import (edit secrets.env first)
+cp secrets.env.example secrets.env
+eve secrets import --org org_xxx --file ./secrets.env
+
+# Or set individually
+eve secrets set ANTHROPIC_API_KEY "..." --org org_xxx
+```
+
+| Harness | Required secret(s) |
+|---------|--------------------|
+| `mclaude` / `claude` | `ANTHROPIC_API_KEY` (preferred) or Claude OAuth via `eve auth sync` |
+| `code` / `codex` | `OPENAI_API_KEY` (preferred) or `CODEX_AUTH_JSON_B64` |
+| `zai` | `Z_AI_API_KEY` |
+| `gemini` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ---
 

@@ -129,6 +129,10 @@ eve auth status
 # Sync your Claude/Codex OAuth tokens to Eve
 eve auth sync
 
+# Import secrets from a file (org/user/project scope)
+cp secrets.env.example secrets.env
+eve secrets import --org org_xxx --file ./secrets.env
+
 # Run integration tests
 ./scripts/integration-test.sh
 
@@ -158,6 +162,27 @@ eve jobs list
 # Check job status
 eve jobs get <job-id>
 ```
+
+## Harness Auth Quick Reference
+
+Pick the harness you want to use, then set the matching API key(s).
+Recommended: store keys at **org** scope so all projects can use them.
+
+```bash
+# Batch import (edit secrets.env first)
+cp secrets.env.example secrets.env
+eve secrets import --org org_xxx --file ./secrets.env
+
+# Or set individually
+eve secrets set ANTHROPIC_API_KEY "..." --org org_xxx
+```
+
+| Harness | Required secret(s) |
+|---------|--------------------|
+| `mclaude` / `claude` | `ANTHROPIC_API_KEY` (preferred) or Claude OAuth via `eve auth sync` |
+| `code` / `codex` | `OPENAI_API_KEY` (preferred) or `CODEX_AUTH_JSON_B64` |
+| `zai` | `Z_AI_API_KEY` |
+| `gemini` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ## Deployment & Promotion Flow
 
@@ -201,7 +226,7 @@ This pattern allows you to build once in test, then promote the same artifacts t
 1. **Push to your repo**: `git push -u origin main`
 2. **Sync OAuth tokens**: `eve auth sync` (uses your Claude/Codex subscriptions)
 3. **Create your first job**: `eve jobs create --prompt "Hello Eve!"`
-4. **Add secrets**: `eve secrets set MY_API_KEY "value"`
+4. **Add secrets**: `eve secrets set MY_API_KEY "value"` (or `cp secrets.env.example secrets.env` + `eve secrets import --file ./secrets.env`)
 
 ## Manual Setup
 
