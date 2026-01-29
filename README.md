@@ -6,6 +6,16 @@ This template gets you started in 5 minutes. One command, AI configures everythi
 
 ## Quick Start
 
+### Default Environment (Staging)
+
+By default, use **staging** for guidance and deploys. Local Docker development is optional and should be used only when explicitly requested.
+
+Set your CLI to staging:
+
+```bash
+export EVE_API_URL=https://api.eve-staging.incept5.dev
+```
+
 ### 1. Initialize Your Project
 
 ```bash

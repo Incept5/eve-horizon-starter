@@ -10,6 +10,17 @@ Before doing any work, load the **eve-read-eve-docs** skill. It is the public, d
 openskills read eve-read-eve-docs
 ```
 
+
+## Default Environment (Staging)
+
+Default to **staging** for usage guidance and deployments. Use local/docker only when explicitly asked to do local development.
+
+Set the API URL for all CLI commands:
+
+```bash
+export EVE_API_URL=https://api.eve-staging.incept5.dev
+```
+
 ## Project Overview
 
 - **Purpose**: Minimal starter template for Eve-compatible projects
