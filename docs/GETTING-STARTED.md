@@ -321,21 +321,56 @@ git push -u origin main
 Choose the harness you want to run and set the matching API key(s).
 Recommended: store keys at **org** scope so all projects can use them.
 
+| Harness | Required secret(s) |
+|---------|--------------------|
+| `mclaude` / `claude` | `ANTHROPIC_API_KEY` (preferred) or Claude OAuth via `eve auth sync` |
+| `code` / `codex` | `OPENAI_API_KEY` (preferred) or Codex OAuth via `eve auth sync` |
+| `zai` | `Z_AI_API_KEY` |
+| `gemini` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
+
+### Option 1: Use Your Existing Claude/Codex Subscription (Recommended)
+
+If you have Claude Code or Codex CLI installed and logged in, Eve can use your existing OAuth tokens:
+
+```bash
+# Check what local credentials are available
+eve auth creds
+
+# Sync your local OAuth tokens to Eve (defaults to user-level)
+eve auth sync                     # User-level (default) - available to all your jobs
+eve auth sync --org org_xxx       # Org-level - shared with org members
+eve auth sync --project proj_xxx  # Project-level - only this project
+
+# Preview what would be synced without actually syncing
+eve auth sync --dry-run
+```
+
+**Where credentials are stored:**
+
+| Tool | macOS | Linux/Windows |
+|------|-------|---------------|
+| Claude Code | Keychain (`Claude Code-credentials`) | `~/.claude/.credentials.json` |
+| Codex/Code | Keychain | `~/.codex/auth.json` or `~/.code/auth.json` |
+
+**To set up credentials:**
+1. Install Claude Code: `npm install -g @anthropic/claude-code` and run `claude` to log in
+2. Install Codex: `npm install -g @openai/codex` and run `codex` to log in
+3. Run `eve auth creds` to verify credentials are detected
+4. Run `eve auth sync` to sync them to Eve (syncs to your user-level by default)
+
+### Option 2: Use API Keys
+
+Set API keys directly via environment file or CLI:
+
 ```bash
 # Batch import (edit secrets.env first)
 cp secrets.env.example secrets.env
 eve secrets import --org org_xxx --file ./secrets.env
 
 # Or set individually
-eve secrets set ANTHROPIC_API_KEY "..." --org org_xxx
+eve secrets set ANTHROPIC_API_KEY "sk-ant-..." --org org_xxx
+eve secrets set OPENAI_API_KEY "sk-..." --org org_xxx
 ```
-
-| Harness | Required secret(s) |
-|---------|--------------------|
-| `mclaude` / `claude` | `ANTHROPIC_API_KEY` (preferred) or Claude OAuth via `eve auth sync` |
-| `code` / `codex` | `OPENAI_API_KEY` (preferred) or `CODEX_AUTH_JSON_B64` |
-| `zai` | `Z_AI_API_KEY` |
-| `gemini` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ---
 

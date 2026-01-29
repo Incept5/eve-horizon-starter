@@ -186,6 +186,29 @@ eve jobs get <job-id>
 Pick the harness you want to use, then set the matching API key(s).
 Recommended: store keys at **org** scope so all projects can use them.
 
+| Harness | Required secret(s) |
+|---------|--------------------|
+| `mclaude` / `claude` | `ANTHROPIC_API_KEY` (preferred) or Claude OAuth via `eve auth sync` |
+| `code` / `codex` | `OPENAI_API_KEY` (preferred) or Codex OAuth via `eve auth sync` |
+| `zai` | `Z_AI_API_KEY` |
+| `gemini` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
+
+### Using Your Existing Claude/Codex Subscription
+
+If you have Claude Code or Codex CLI installed and logged in, Eve can use your existing OAuth tokens:
+
+```bash
+# Check what local credentials are available
+eve auth creds
+
+# Sync your local OAuth tokens to Eve (defaults to user-level)
+eve auth sync                     # User-level (default)
+eve auth sync --org org_xxx       # Org-level
+eve auth sync --project proj_xxx  # Project-level
+```
+
+### Using API Keys
+
 ```bash
 # Batch import (edit secrets.env first)
 cp secrets.env.example secrets.env
@@ -194,13 +217,6 @@ eve secrets import --org org_xxx --file ./secrets.env
 # Or set individually
 eve secrets set ANTHROPIC_API_KEY "..." --org org_xxx
 ```
-
-| Harness | Required secret(s) |
-|---------|--------------------|
-| `mclaude` / `claude` | `ANTHROPIC_API_KEY` (preferred) or Claude OAuth via `eve auth sync` |
-| `code` / `codex` | `OPENAI_API_KEY` (preferred) or `CODEX_AUTH_JSON_B64` |
-| `zai` | `Z_AI_API_KEY` |
-| `gemini` | `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) |
 
 ## Deployment & Promotion Flow
 
