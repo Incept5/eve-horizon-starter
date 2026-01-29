@@ -27,7 +27,15 @@ Open the project in Claude Code, Cursor, or your preferred AI coding agent:
 claude  # or cursor, etc.
 ```
 
-### 3. Run Setup
+### 3. Load Eve Docs Skill (Critical)
+
+Ask your AI agent:
+
+> "Run the eve-read-eve-docs skill"
+
+This loads the public, distilled Eve Horizon system docs (CLI, manifest, pipelines, jobs, secrets).
+
+### 4. Run Setup
 
 Ask your AI agent:
 

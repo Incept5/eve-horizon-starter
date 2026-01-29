@@ -2,6 +2,14 @@
 
 This is an Eve-compatible starter project. Agents working in this repo should follow these guidelines.
 
+## CRITICAL: Load Eve Docs Skill First
+
+Before doing any work, load the **eve-read-eve-docs** skill. It is the public, distilled source of Eve Horizon system docs (CLI, manifest, pipelines, jobs, secrets) and is required when private docs are unavailable.
+
+```bash
+openskills read eve-read-eve-docs
+```
+
 ## Project Overview
 
 - **Purpose**: Minimal starter template for Eve-compatible projects
