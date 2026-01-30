@@ -50,7 +50,7 @@ The `eve init` command:
 4. Created an initial commit
 
 The setup skill then automated:
-1. **Profile Creation**: `eve profile create staging --api-url https://api.eve-staging.incept5.dev`
+1. **Profile Creation**: `eve profile create staging --api-url https://api.eh1.incept5.dev`
 2. **Authentication**: Using your SSH key (auto-discovered from GitHub if needed)
 3. **Manifest Configuration**: Set project slug, name, description in `.eve/manifest.yaml`
 4. **Git Remote**: Configured your own repository
@@ -208,7 +208,7 @@ If you prefer to set up manually or need to troubleshoot, follow these steps.
 - **SSH key** (ed25519 or RSA) - typically at `~/.ssh/id_ed25519`
 - **GitHub account** with your SSH key added (for auto-discovery)
 - **Node.js 18+** installed
-- **API URL** from your admin (e.g., `https://api.eve-staging.incept5.dev`)
+- **API URL** from your admin (e.g., `https://api.eh1.incept5.dev`)
 
 ### Install the CLI
 
@@ -235,7 +235,7 @@ pnpm link --global
 ### Create a Profile
 
 ```bash
-eve profile create staging --api-url https://api.eve-staging.incept5.dev
+eve profile create staging --api-url https://api.eh1.incept5.dev
 ```
 
 ### Set Default Credentials

@@ -13,7 +13,7 @@ By default, use **staging** for guidance and deploys. Local Docker development i
 Set your CLI to staging:
 
 ```bash
-export EVE_API_URL=https://api.eve-staging.incept5.dev
+export EVE_API_URL=https://api.eh1.incept5.dev
 ```
 
 ### 1. Initialize Your Project
@@ -275,7 +275,7 @@ npm install -g @eve-horizon/cli
 ### Create Profile
 
 ```bash
-eve profile create staging --api-url https://api.eve-staging.incept5.dev
+eve profile create staging --api-url https://api.eh1.incept5.dev
 eve profile set staging --default-email your@email.com
 ```
 
