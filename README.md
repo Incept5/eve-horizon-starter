@@ -218,6 +218,32 @@ eve secrets import --org org_xxx --file ./secrets.env
 eve secrets set ANTHROPIC_API_KEY "..." --org org_xxx
 ```
 
+## Builds
+
+Eve Horizon treats builds as first-class primitives, creating tracked records for every build:
+
+- **Automatic in pipelines**: Builds happen automatically when deploying via pipelines
+- **Tracked artifacts**: Each build creates records with image digests for reproducibility
+- **Inspect builds**: Use `eve build list`, `eve build show <build_id>`, or `eve build diagnose <build_id>`
+- **Promotion guarantee**: Build artifacts ensure identical images across environments (test → staging → production)
+
+```bash
+# List all builds for the current project
+eve build list
+
+# View build details and status
+eve build show <build_id>
+
+# See image digests produced by a build
+eve build artifacts <build_id>
+
+# Full diagnostic (spec + runs + artifacts + logs)
+eve build diagnose <build_id>
+
+# View build output logs
+eve build logs <build_id>
+```
+
 ## Deployment & Promotion Flow
 
 The manifest configures pipelines for automated deployments. You can also deploy directly:

@@ -64,8 +64,12 @@ pipelines:
         script:
           run: ./scripts/integration-test.sh
           timeout: 1800
-      - name: release
+      - name: build
         depends_on: [integration-tests]
+        action:
+          type: build
+      - name: release
+        depends_on: [build]
         action:
           type: release
       - name: deploy-staging
@@ -96,7 +100,15 @@ pipelines:
   # For direct deployment use: eve env deploy test --ref <git-sha-or-branch>
   deploy-test:
     steps:
+      - name: build
+        action:
+          type: build
+      - name: release
+        depends_on: [build]
+        action:
+          type: release
       - name: deploy
+        depends_on: [release]
         action:
           type: deploy
           env_name: test

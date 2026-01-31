@@ -66,6 +66,15 @@ eve env deploy staging --ref main
 
 **Note**: The `--ref` parameter is required and must be a valid git SHA or branch name.
 
+### Inspect builds
+```bash
+eve build list                    # List builds for current project
+eve build show <build_id>         # Build spec details
+eve build artifacts <build_id>    # Image digests produced
+eve build diagnose <build_id>     # Full diagnostic (spec + runs + artifacts + logs)
+eve build logs <build_id>         # Build output logs
+```
+
 ### Promotion flow (test → staging)
 ```bash
 # 1. Build and deploy to test
