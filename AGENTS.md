@@ -55,16 +55,16 @@ eve pipeline run deploy --env staging
 
 **Direct deployment** (requires explicit git ref):
 ```bash
-# Deploy to test environment with git SHA or branch
-eve env deploy test --ref abc123
-eve env deploy test --ref main
+# Deploy to test environment with git SHA or ref resolved against --repo-dir
+eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
+eve env deploy test --ref main --repo-dir .
 
-# Deploy to staging with git SHA or branch
-eve env deploy staging --ref abc123
-eve env deploy staging --ref main
+# Deploy to staging with git SHA or ref resolved against --repo-dir
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
+eve env deploy staging --ref main --repo-dir .
 ```
 
-**Note**: The `--ref` parameter is required and must be a valid git SHA or branch name.
+**Note**: The `--ref` parameter is required and must be a 40-character SHA, or a ref resolved against `--repo-dir`/cwd.
 
 ### Inspect builds
 ```bash
@@ -78,24 +78,24 @@ eve build logs <build_id>         # Build output logs
 ### Promotion flow (test → staging)
 ```bash
 # 1. Build and deploy to test
-eve env deploy test --ref abc123
+eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
 
 # 2. Get release information
 eve release resolve v1.2.3
 
 # 3. Promote to staging with release reference
-eve env deploy staging --ref abc123 --inputs '{"release_id":"rel_xxx"}'
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567 --inputs '{"release_id":"rel_xxx"}'
 ```
 
 ### Check deployment
 ```bash
-eve env status staging
+eve env show proj_xxx staging
 ```
 
 ### Add a new service
 1. Add Dockerfile in `apps/<name>/`
 2. Add service to `.eve/manifest.yaml`
-3. Deploy: `eve env deploy staging --ref main` or `eve pipeline run deploy --env staging`
+3. Deploy: `eve env deploy staging --ref main --repo-dir .` or `eve pipeline run deploy --env staging`
 
 ## Skills Available
 
@@ -112,8 +112,8 @@ Run `openskills list` to see all installed skills.
 
 1. Make changes to code
 2. Test locally: `docker compose up --build`
-3. Deploy: `eve env deploy staging --ref main` (or use `eve pipeline run deploy --env staging`)
-4. Verify: `eve env status staging`
+3. Deploy: `eve env deploy staging --ref main --repo-dir .` (or use `eve pipeline run deploy --env staging`)
+4. Verify: `eve env show proj_xxx staging`
 
 ## Keep AGENTS.md Current (Critical)
 

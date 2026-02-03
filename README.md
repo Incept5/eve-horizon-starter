@@ -161,9 +161,9 @@ docker compose up --build
 cd apps/api
 npm start
 
-# Deploy to environments (requires --ref with git SHA or branch)
-eve env deploy test --ref main
-eve env deploy staging --ref abc123
+# Deploy to environments (requires --ref with 40-char SHA or ref resolved against --repo-dir)
+eve env deploy test --ref main --repo-dir .
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
 
 # Run the CI/CD pipeline (staging)
 eve pipeline run ci-cd-main --env staging
@@ -172,13 +172,13 @@ eve pipeline run ci-cd-main --env staging
 eve project sync --validate-secrets
 
 # Create a job
-eve jobs create --prompt "Review the codebase and suggest improvements"
+eve job create --prompt "Review the codebase and suggest improvements"
 
 # List your jobs
-eve jobs list
+eve job list
 
 # Check job status
-eve jobs get <job-id>
+eve job show <job-id>
 ```
 
 ## Harness Auth Quick Reference
@@ -250,19 +250,19 @@ The manifest configures pipelines for automated deployments. You can also deploy
 
 ### Direct Deployment
 
-Deploy to an environment using `eve env deploy` (requires `--ref` with a git SHA or branch):
+Deploy to an environment using `eve env deploy` (requires `--ref` with a 40-character SHA or a ref resolved against `--repo-dir`/cwd):
 
 ```bash
 # Deploy to test
-eve env deploy test --ref main
-eve env deploy test --ref abc123
+eve env deploy test --ref main --repo-dir .
+eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
 
 # Deploy to staging
-eve env deploy staging --ref main
-eve env deploy staging --ref def456
+eve env deploy staging --ref main --repo-dir .
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
 ```
 
-**Note**: The `--ref` parameter is required and must be a valid git commit SHA or branch name.
+**Note**: The `--ref` parameter is required and must be a 40-character SHA, or a ref resolved against `--repo-dir`/cwd.
 
 ### Promotion Flow (test → staging)
 
@@ -270,13 +270,13 @@ The typical promotion workflow when using pipelines:
 
 ```bash
 # 1. Build and deploy to test environment
-eve env deploy test --ref abc123
+eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
 
 # 2. Get release information after build
 eve release resolve v1.2.3
 
 # 3. Promote to staging with the same ref and release ID
-eve env deploy staging --ref abc123 --inputs '{"release_id":"rel_xxx"}'
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567 --inputs '{"release_id":"rel_xxx"}'
 ```
 
 This pattern allows you to build once in test, then promote the same artifacts to staging.
@@ -285,7 +285,7 @@ This pattern allows you to build once in test, then promote the same artifacts t
 
 1. **Push to your repo**: `git push -u origin main`
 2. **Sync OAuth tokens**: `eve auth sync` (uses your Claude/Codex subscriptions)
-3. **Create your first job**: `eve jobs create --prompt "Hello Eve!"`
+3. **Create your first job**: `eve job create --prompt "Hello Eve!"`
 4. **Add secrets**: `eve secrets set MY_API_KEY "value"` (or `cp secrets.env.example secrets.env` + `eve secrets import --file ./secrets.env`)
 
 ## Manual Setup

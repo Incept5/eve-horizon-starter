@@ -113,15 +113,15 @@ npm start
 Deploy to environments:
 
 ```bash
-# Direct deployment (requires --ref with git SHA or branch)
-eve env deploy test --ref main
-eve env deploy staging --ref abc123
+# Direct deployment (requires --ref with 40-char SHA or a ref resolved against --repo-dir)
+eve env deploy test --ref main --repo-dir .
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
 
 # Via pipeline (recommended for CI/CD)
 eve pipeline run deploy --env staging
 ```
 
-**Note**: When using `eve env deploy`, the `--ref` parameter is required and must be a valid git commit SHA or branch name.
+**Note**: When using `eve env deploy`, the `--ref` parameter is required and must be a 40-character SHA, or a ref resolved against `--repo-dir`/cwd.
 
 ## Deployment Patterns
 
@@ -130,13 +130,13 @@ eve pipeline run deploy --env staging
 Use `eve env deploy` to deploy directly to an environment:
 
 ```bash
-eve env deploy test --ref main      # Deploy test using main branch
-eve env deploy staging --ref abc123  # Deploy staging using specific commit
+eve env deploy test --ref main --repo-dir .      # Deploy test using main branch
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567  # Deploy staging using specific commit
 ```
 
 The `--ref` parameter is **required** and accepts:
-- Git commit SHA (e.g., `abc123`)
-- Branch name (e.g., `main`, `feature-xyz`)
+- 40-character git SHA (e.g., `0123456789abcdef0123456789abcdef01234567`)
+- Branch name resolved via `--repo-dir` (e.g., `main`, `feature-xyz`)
 
 ### Promotion Flow (test → staging)
 
@@ -144,13 +144,13 @@ When environments have pipelines configured (see `.eve/manifest.yaml`), use this
 
 ```bash
 # 1. Build and deploy to test environment
-eve env deploy test --ref abc123
+eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
 
 # 2. Get release information after successful build
 eve release resolve v1.2.3
 
 # 3. Promote to staging with the same ref and release ID
-eve env deploy staging --ref abc123 --inputs '{"release_id":"rel_xxx"}'
+eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567 --inputs '{"release_id":"rel_xxx"}'
 ```
 
 This ensures you build artifacts once in test, then promote the same artifacts to staging without rebuilding.
@@ -168,10 +168,10 @@ cp secrets.env.example secrets.env
 eve secrets import --org org_xxx --file ./secrets.env
 
 # Create your first job
-eve jobs create --prompt "Review the codebase and suggest improvements"
+eve job create --prompt "Review the codebase and suggest improvements"
 
 # Check job status
-eve jobs list
+eve job list
 ```
 
 ---
@@ -297,21 +297,21 @@ git push -u origin main
 | `eve auth sync` | Sync local OAuth tokens to Eve |
 | `eve org list` | List your organizations |
 | `eve project list` | List projects in your org |
-| `eve env deploy <env> --ref <sha>` | Deploy to environment (requires git ref) |
-| `eve env status <env>` | Check environment status |
+| `eve env deploy <env> --ref <sha>` | Deploy to environment (requires git ref; use `--repo-dir` to resolve branches) |
+| `eve env show <project> <env>` | Check environment status |
 | `eve release resolve <version>` | Get release information |
 | `eve pipeline run <name> --env <env>` | Run a pipeline |
 | `eve secrets list` | List project secrets |
 | `eve secrets set KEY VALUE` | Set a project secret |
 | `eve secrets import --file ./secrets.env` | Import secrets from a file (use `--org`, `--user`, or `--project`) |
-| `eve jobs create --prompt "..."` | Create a new job |
-| `eve jobs list` | List jobs in your project |
-| `eve jobs list --phase active` | List active jobs |
-| `eve jobs ready` | Show schedulable jobs |
-| `eve jobs show <id>` | View job details |
-| `eve jobs follow <id>` | Stream job logs |
-| `eve jobs wait <id>` | Wait for job completion |
-| `eve jobs result <id>` | Get job results |
+| `eve job create --prompt "..."` | Create a new job |
+| `eve job list` | List jobs in your project |
+| `eve job list --phase active` | List active jobs |
+| `eve job ready` | Show schedulable jobs |
+| `eve job show <id>` | View job details |
+| `eve job follow <id>` | Stream job logs |
+| `eve job wait <id>` | Wait for job completion |
+| `eve job result <id>` | Get job results |
 | `eve harness list` | List available AI harnesses |
 
 ---
@@ -420,8 +420,8 @@ The job is waiting to be scheduled. Check:
 View the logs and diagnostics:
 
 ```bash
-eve jobs logs <job-id>
-eve jobs diagnose <job-id>
+eve job logs <job-id>
+eve job diagnose <job-id>
 ```
 
 ### Wrong Profile Active
@@ -452,10 +452,10 @@ eve system health
 eve --help
 
 # Command help
-eve jobs --help
+eve job --help
 
 # Subcommand help
-eve jobs create --help
+eve job create --help
 ```
 
 ### JSON Output
@@ -463,6 +463,6 @@ eve jobs create --help
 Add `--json` to any command for machine-readable output:
 
 ```bash
-eve jobs list --json
+eve job list --json
 eve auth status --json
 ```
