@@ -10,6 +10,14 @@ Before doing any work, load the **eve-read-eve-docs** skill. It is the public, d
 openskills read eve-read-eve-docs
 ```
 
+Then review the CLI quick reference:
+
+```bash
+cat .agent/skills/eve-read-eve-docs/references/cli.md
+```
+
+This ensures CLI usage, `--repo-dir`, and deploy flows are current before editing anything.
+
 
 ## Default Environment (Staging)
 
