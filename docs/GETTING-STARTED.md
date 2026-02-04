@@ -66,6 +66,21 @@ Eve Horizon runs AI-powered jobs for your project:
 | **Documentation** | Generate docs, changelogs, READMEs |
 | **Development** | Code scaffolding, refactoring, migrations |
 
+## Configure Agents & Chat
+
+This starter includes example agent and chat config files under `agents/`. Sync them to Eve:
+
+```bash
+eve agents sync --project proj_xxx --ref main --repo-dir .
+```
+
+Test chat routing without Slack:
+
+```bash
+eve chat simulate slack --project proj_xxx \
+  --team-id T123 --channel C456 --user U789 --text "hello"
+```
+
 ## Starter API & Tests
 
 The starter service exposes a small todos API:

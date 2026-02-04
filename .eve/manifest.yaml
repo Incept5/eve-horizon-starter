@@ -15,6 +15,12 @@ x-eve:
     secrets:
       - GHCR_USERNAME
       - GITHUB_TOKEN
+  agents:
+    version: 1
+    config_path: agents/agents.yaml
+    teams_path: agents/teams.yaml
+  chat:
+    config_path: agents/chat.yaml
 
 registry:
   host: ghcr.io

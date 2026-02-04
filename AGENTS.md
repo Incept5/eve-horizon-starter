@@ -34,6 +34,7 @@ export EVE_API_URL=https://api.eh1.incept5.dev
 - **Purpose**: Minimal starter template for Eve-compatible projects
 - **Stack**: Staging-first Eve Horizon with Docker Compose for local dev
 - **Skills**: eve-se skillpack installed via `eve init` or `eve skills install`
+- **Agent Runtime**: Agents + teams + chat routing defined under `agents/`
 
 Local dev runs via Docker Compose and is then translated into `.eve/manifest.yaml` for deployment to the remote staging cluster.
 
@@ -42,10 +43,28 @@ Local dev runs via Docker Compose and is then translated into `.eve/manifest.yam
 | File | Purpose |
 |------|---------|
 | `.eve/manifest.yaml` | Deployment configuration (services, envs) |
+| `agents/agents.yaml` | Agent definitions (skills, workflows, policies) |
+| `agents/teams.yaml` | Team composition and dispatch settings |
+| `agents/chat.yaml` | Chat routing rules (targets + permissions) |
 | `skills.txt` | Skill sources for agents |
 | `.eve/hooks/on-clone.sh` | Auto-installs skills when Eve workers clone |
 | `apps/api/` | Example API service |
 | `scripts/` | Helper scripts for setup and deploy |
+
+## Agent Configuration
+
+Agent runtime configuration lives in `agents/` and is synced to Eve:
+
+```bash
+eve agents sync --project proj_xxx --ref main --repo-dir .
+```
+
+To test chat routing without Slack:
+
+```bash
+eve chat simulate slack --project proj_xxx \
+  --team-id T123 --channel C456 --user U789 --text "hello"
+```
 
 ## Common Tasks
 
@@ -104,6 +123,21 @@ eve env show proj_xxx staging
 1. Add Dockerfile in `apps/<name>/`
 2. Add service to `.eve/manifest.yaml`
 3. Deploy: `eve env deploy staging --ref main --repo-dir .` or `eve pipeline run deploy --env staging`
+
+### Sync agent config
+```bash
+eve agents sync --project proj_xxx --ref main --repo-dir .
+```
+
+### Simulate chat routing
+```bash
+eve chat simulate slack --project proj_xxx --team-id T123 --channel C456 --user U789 --text "hello"
+```
+
+### Connect Slack
+```bash
+eve integrations slack connect --project proj_xxx
+```
 
 ## Skills Available
 

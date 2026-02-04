@@ -1,0 +1,13 @@
+version: 1
+agents:
+  assistant:
+    skill: eve-se-index
+    workflow: assistant
+    harness_profile: default
+    access:
+      envs: [test, staging]
+    policies:
+      permission_policy: auto_edit
+      git:
+        commit: manual
+        push: never

@@ -95,6 +95,10 @@ eve skills install
 
 ```
 my-project/
+├── agents/
+│   ├── agents.yaml      # Agent definitions
+│   ├── teams.yaml       # Team composition + dispatch
+│   └── chat.yaml        # Chat routing rules
 ├── .eve/
 │   └── manifest.yaml    # Eve project configuration
 ├── docs/
@@ -103,6 +107,27 @@ my-project/
 ├── AGENTS.md            # Agent instructions (universal)
 ├── CLAUDE.md            # Claude Code redirect
 └── README.md
+```
+
+## Agents & Chat Configuration
+
+Eve supports **agents**, **teams**, and **chat routing** as first-class primitives. This starter ships example configs:
+
+- `agents/agents.yaml` defines agents (skills, workflows, access policies)
+- `agents/teams.yaml` defines team membership + dispatch mode
+- `agents/chat.yaml` defines chat routing rules
+
+Sync these configs to Eve whenever they change:
+
+```bash
+eve agents sync --project proj_xxx --ref main --repo-dir .
+```
+
+Test chat routing without Slack:
+
+```bash
+eve chat simulate slack --project proj_xxx \
+  --team-id T123 --channel C456 --user U789 --text "hello"
 ```
 
 ## Customize This Starter (Read First)
@@ -173,6 +198,15 @@ eve project sync --validate-secrets
 
 # Create a job
 eve job create --prompt "Review the codebase and suggest improvements"
+
+# Sync agent config
+eve agents sync --project proj_xxx --ref main --repo-dir .
+
+# Simulate chat routing (no Slack required)
+eve chat simulate slack --project proj_xxx --team-id T123 --channel C456 --user U789 --text "hello"
+
+# Connect Slack (optional)
+eve integrations slack connect --project proj_xxx
 
 # List your jobs
 eve job list

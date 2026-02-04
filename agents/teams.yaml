@@ -1,0 +1,8 @@
+version: 1
+teams:
+  default:
+    lead: assistant
+    members: [assistant]
+    dispatch:
+      mode: fanout
+      max_parallel: 1

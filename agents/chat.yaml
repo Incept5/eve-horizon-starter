@@ -1,0 +1,8 @@
+version: 1
+default_route: catch_all
+routes:
+  - id: catch_all
+    match: ".*"
+    target: team:default
+    permissions:
+      project_roles: [member, admin, owner]
