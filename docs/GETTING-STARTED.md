@@ -29,7 +29,7 @@ claude  # or cursor, etc.
 
 Ask your AI agent:
 
-> "Run the eve-new-project-setup skill"
+> "Run the eve-bootstrap skill"
 
 The AI will:
 - Set up your staging profile and authentication
@@ -133,7 +133,7 @@ eve env deploy test --ref main --repo-dir .
 eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
 
 # Via pipeline (recommended for CI/CD)
-eve pipeline run deploy --env staging
+eve pipeline run ci-cd-main --env staging
 ```
 
 **Note**: When using `eve env deploy`, the `--ref` parameter is required and must be a 40-character SHA, or a ref resolved against `--repo-dir`/cwd.
@@ -183,7 +183,7 @@ cp secrets.env.example secrets.env
 eve secrets import --org org_xxx --file ./secrets.env
 
 # Create your first job
-eve job create --prompt "Review the codebase and suggest improvements"
+eve job create --description "Review the codebase and suggest improvements"
 
 # Check job status
 eve job list
@@ -319,7 +319,7 @@ git push -u origin main
 | `eve secrets list` | List project secrets |
 | `eve secrets set KEY VALUE` | Set a project secret |
 | `eve secrets import --file ./secrets.env` | Import secrets from a file (use `--org`, `--user`, or `--project`) |
-| `eve job create --prompt "..."` | Create a new job |
+| `eve job create --description "..."` | Create a new job |
 | `eve job list` | List jobs in your project |
 | `eve job list --phase active` | List active jobs |
 | `eve job ready` | Show schedulable jobs |

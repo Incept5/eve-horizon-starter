@@ -49,7 +49,7 @@ This loads the public, distilled Eve Horizon system docs (CLI, manifest, pipelin
 
 Ask your AI agent:
 
-> "Run the eve-new-project-setup skill"
+> "Run the eve-bootstrap skill"
 
 The AI will:
 - Set up your profile for the staging environment
@@ -103,7 +103,8 @@ my-project/
 │   └── manifest.yaml    # Eve project configuration
 ├── docs/
 │   └── GETTING-STARTED.md
-├── skills.txt           # Skillpack references
+├── skills.txt           # Legacy skillpack references
+├── .eve/packs.lock.yaml # Resolved AgentPacks (preferred)
 ├── AGENTS.md            # Agent instructions (universal)
 ├── CLAUDE.md            # Claude Code redirect
 └── README.md
@@ -128,6 +129,22 @@ Test chat routing without Slack:
 ```bash
 eve chat simulate slack --project proj_xxx \
   --team-id T123 --channel C456 --user U789 --text "hello"
+```
+
+## Access Policy As Code
+
+The starter includes `.eve/access.yaml` (version 2) with a default
+group-scoped data-plane access model for `orgdocs`, `orgfs`, and `envdb`.
+
+```bash
+# Validate policy
+eve access validate --file .eve/access.yaml
+
+# Preview changes
+eve access plan --file .eve/access.yaml --org org_xxx
+
+# Apply to org
+eve access sync --file .eve/access.yaml --org org_xxx --yes
 ```
 
 ## Customize This Starter (Read First)
@@ -197,7 +214,7 @@ eve pipeline run ci-cd-main --env staging
 eve project sync --validate-secrets
 
 # Create a job
-eve job create --prompt "Review the codebase and suggest improvements"
+eve job create --description "Review the codebase and suggest improvements"
 
 # Sync agent config
 eve agents sync --project proj_xxx --ref main --repo-dir .
@@ -319,7 +336,7 @@ This pattern allows you to build once in test, then promote the same artifacts t
 
 1. **Push to your repo**: `git push -u origin main`
 2. **Sync OAuth tokens**: `eve auth sync` (uses your Claude/Codex subscriptions)
-3. **Create your first job**: `eve job create --prompt "Hello Eve!"`
+3. **Create your first job**: `eve job create --description "Hello Eve!"`
 4. **Add secrets**: `eve secrets set MY_API_KEY "value"` (or `cp secrets.env.example secrets.env` + `eve secrets import --file ./secrets.env`)
 
 ## Manual Setup

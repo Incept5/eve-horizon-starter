@@ -7,7 +7,7 @@ This is an Eve-compatible starter project. Agents working in this repo should fo
 Before doing any work, load the **eve-read-eve-docs** skill. It is the public, distilled source of Eve Horizon system docs (CLI, manifest, pipelines, jobs, secrets) and is required when private docs are unavailable.
 
 ```bash
-openskills read eve-read-eve-docs
+skill read eve-read-eve-docs
 ```
 
 Then review the CLI quick reference:
@@ -46,7 +46,8 @@ Local dev runs via Docker Compose and is then translated into `.eve/manifest.yam
 | `agents/agents.yaml` | Agent definitions (skills, workflows, policies) |
 | `agents/teams.yaml` | Team composition and dispatch settings |
 | `agents/chat.yaml` | Chat routing rules (targets + permissions) |
-| `skills.txt` | Skill sources for agents |
+| `skills.txt` | Legacy skill sources for agents |
+| `.eve/packs.lock.yaml` | Resolved AgentPacks (preferred) |
 | `.eve/hooks/on-clone.sh` | Auto-installs skills when Eve workers clone |
 | `apps/api/` | Example API service |
 | `scripts/` | Helper scripts for setup and deploy |
@@ -77,7 +78,7 @@ docker compose up --build   # http://localhost:3000
 
 **Via pipeline** (recommended for CI/CD):
 ```bash
-eve pipeline run deploy --env staging
+eve pipeline run ci-cd-main --env staging
 ```
 
 **Direct deployment** (requires explicit git ref):
@@ -122,7 +123,7 @@ eve env show proj_xxx staging
 ### Add a new service
 1. Add Dockerfile in `apps/<name>/`
 2. Add service to `.eve/manifest.yaml`
-3. Deploy: `eve env deploy staging --ref main --repo-dir .` or `eve pipeline run deploy --env staging`
+3. Deploy: `eve env deploy staging --ref main --repo-dir .` or `eve pipeline run ci-cd-main --env staging`
 
 ### Sync agent config
 ```bash
@@ -136,25 +137,26 @@ eve chat simulate slack --project proj_xxx --team-id T123 --channel C456 --user 
 
 ### Connect Slack
 ```bash
-eve integrations slack connect --project proj_xxx
+eve integrations slack connect --org org_xxx --team-id T123 --token xoxb-test
 ```
 
 ## Skills Available
 
 Skills are installed automatically by `eve init`. Key skills:
-- **eve-new-project-setup** - Initial profile/auth/manifest configuration
+- **eve-bootstrap** - Onboarding, access request, and project setup (recommended)
+- **eve-new-project-setup** - Legacy setup flow
 - **eve-manifest-authoring** - Manifest editing guidance
 - **eve-deploy-debugging** - Troubleshoot deployments
 - **eve-pipelines-workflows** - CI/CD configuration
 - **eve-job-lifecycle** - Create and manage Eve jobs
 
-Run `openskills list` to see all installed skills.
+Browse `.agent/skills` to see installed skills, then load with `skill read <skill-name>`.
 
 ## Development Workflow
 
 1. Make changes to code
 2. Test locally: `docker compose up --build`
-3. Deploy: `eve env deploy staging --ref main --repo-dir .` (or use `eve pipeline run deploy --env staging`)
+3. Deploy: `eve env deploy staging --ref main --repo-dir .` (or use `eve pipeline run ci-cd-main --env staging`)
 4. Verify: `eve env show proj_xxx staging`
 
 ## Keep AGENTS.md Current (Critical)
@@ -175,7 +177,7 @@ This file must be rewritten to match the actual product domain and tech stack on
 When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
 
 How to use skills:
-- Invoke: Bash("openskills read <skill-name>")
+- Invoke: Bash("skill read <skill-name>")
 - The skill content will load with detailed instructions on how to complete the task
 - Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
 
