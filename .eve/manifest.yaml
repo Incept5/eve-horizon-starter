@@ -8,12 +8,11 @@ project: eve-starter
 # Default values applied across environments
 x-eve:
   defaults:
-    env: test
+    env: sandbox
     hints:
       harness: mclaude
   requires:
     secrets:
-      - GHCR_USERNAME
       - GITHUB_TOKEN
   agents:
     version: 1
@@ -22,18 +21,13 @@ x-eve:
   chat:
     config_path: agents/chat.yaml
 
-registry:
-  host: ghcr.io
-  namespace: incept5
-  auth:
-    username_secret: GHCR_USERNAME
-    token_secret: GITHUB_TOKEN
+registry: "eve"
 
 # Environment definitions - where your application runs
 # Deploy using: eve env deploy <env-name> --ref <git-sha-or-branch>
 # Or via pipeline: eve pipeline run <pipeline-name> --env <env-name>
 environments:
-  test:
+  sandbox:
     type: persistent
   staging:
     type: persistent
@@ -43,7 +37,6 @@ services:
   api:
     build:
       context: apps/api
-    image: ghcr.io/incept5/eve-starter-api:latest
     ports: [3000]
     environment:
       NODE_ENV: production
@@ -102,9 +95,9 @@ pipelines:
           title: "fix: automated remediation for job failure"
           dry_run: false
 
-  # Deploy test environment pipeline
-  # For direct deployment use: eve env deploy test --ref <git-sha-or-branch>
-  deploy-test:
+  # Deploy sandbox environment pipeline
+  # For direct deployment use: eve env deploy sandbox --ref <git-sha-or-branch>
+  deploy-sandbox:
     steps:
       - name: build
         action:
@@ -117,7 +110,7 @@ pipelines:
         depends_on: [release]
         action:
           type: deploy
-          env_name: test
+          env_name: sandbox
 
 # Workflows - agent-based operations that require analysis
 workflows:

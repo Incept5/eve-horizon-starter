@@ -204,7 +204,7 @@ cd apps/api
 npm start
 
 # Deploy to environments (requires --ref with 40-char SHA or ref resolved against --repo-dir)
-eve env deploy test --ref main --repo-dir .
+eve env deploy sandbox --ref main --repo-dir .
 eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
 
 # Run the CI/CD pipeline (staging)
@@ -276,7 +276,7 @@ Eve Horizon treats builds as first-class primitives, creating tracked records fo
 - **Automatic in pipelines**: Builds happen automatically when deploying via pipelines
 - **Tracked artifacts**: Each build creates records with image digests for reproducibility
 - **Inspect builds**: Use `eve build list`, `eve build show <build_id>`, or `eve build diagnose <build_id>`
-- **Promotion guarantee**: Build artifacts ensure identical images across environments (test → staging → production)
+- **Promotion guarantee**: Build artifacts ensure identical images across environments (sandbox → staging → production)
 
 ```bash
 # List all builds for the current project
@@ -304,9 +304,9 @@ The manifest configures pipelines for automated deployments. You can also deploy
 Deploy to an environment using `eve env deploy` (requires `--ref` with a 40-character SHA or a ref resolved against `--repo-dir`/cwd):
 
 ```bash
-# Deploy to test
-eve env deploy test --ref main --repo-dir .
-eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
+# Deploy to sandbox
+eve env deploy sandbox --ref main --repo-dir .
+eve env deploy sandbox --ref 0123456789abcdef0123456789abcdef01234567
 
 # Deploy to staging
 eve env deploy staging --ref main --repo-dir .
@@ -315,13 +315,13 @@ eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567
 
 **Note**: The `--ref` parameter is required and must be a 40-character SHA, or a ref resolved against `--repo-dir`/cwd.
 
-### Promotion Flow (test → staging)
+### Promotion Flow (sandbox → staging)
 
 The typical promotion workflow when using pipelines:
 
 ```bash
-# 1. Build and deploy to test environment
-eve env deploy test --ref 0123456789abcdef0123456789abcdef01234567
+# 1. Build and deploy to sandbox environment
+eve env deploy sandbox --ref 0123456789abcdef0123456789abcdef01234567
 
 # 2. Get release information after build
 eve release resolve v1.2.3
@@ -330,7 +330,7 @@ eve release resolve v1.2.3
 eve env deploy staging --ref 0123456789abcdef0123456789abcdef01234567 --inputs '{"release_id":"rel_xxx"}'
 ```
 
-This pattern allows you to build once in test, then promote the same artifacts to staging.
+This pattern allows you to build once in sandbox, then promote the same artifacts to staging.
 
 ## Next Steps
 
