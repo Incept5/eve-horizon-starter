@@ -9,11 +9,6 @@ project: eve-starter
 x-eve:
   defaults:
     env: sandbox
-    hints:
-      harness: mclaude
-  requires:
-    secrets:
-      - GITHUB_TOKEN
 
 registry: "eve"
 
@@ -22,8 +17,6 @@ registry: "eve"
 # Or via pipeline: eve pipeline run <pipeline-name> --env <env-name>
 environments:
   sandbox:
-    type: persistent
-  staging:
     type: persistent
 
 # Service definitions - the services that make up your application
@@ -64,50 +57,6 @@ services:
         spec_url: /openapi.json
 
 pipelines:
-  # CI/CD pipeline triggered on push to main
-  # Builds, creates release, and deploys to staging
-  # The pipeline handles git ref automatically from the triggering commit
-  ci-cd-main:
-    trigger:
-      github:
-        event: push
-        branch: main
-    steps:
-      - name: build
-        action:
-          type: build
-      - name: release
-        depends_on: [build]
-        action:
-          type: release
-      - name: deploy-staging
-        depends_on: [release]
-        action:
-          type: deploy
-          env_name: staging
-      - name: migrate
-        depends_on: [deploy-staging]
-        action:
-          type: run
-          service: migrate
-
-  # Remediation pipeline - triggers on job failures
-  remediation:
-    trigger:
-      system:
-        event: job.failed
-    steps:
-      - name: analyze
-        agent:
-          prompt: "Analyze the failure and propose a fix. Check logs, identify root cause, and suggest code changes."
-      - name: create-pr
-        depends_on: [analyze]
-        action:
-          type: create-pr
-          head: remediation/${job_id}
-          base: main
-          title: "fix: automated remediation for job failure"
-          dry_run: false
 
   # Deploy sandbox environment pipeline
   # For direct deployment use: eve env deploy sandbox --ref <git-sha-or-branch>
@@ -130,14 +79,3 @@ pipelines:
         action:
           type: run
           service: migrate
-
-# Workflows - agent-based operations that require analysis
-workflows:
-  log-audit:
-    trigger:
-      cron: "0 * * * *"  # Hourly
-    description: "Audit application logs for errors and trigger remediation if needed"
-    steps:
-      - name: audit
-        agent:
-          prompt: "Check the application logs for errors in the last hour. If critical errors are found, create a remediation plan."
