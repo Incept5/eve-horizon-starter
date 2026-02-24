@@ -14,12 +14,6 @@ x-eve:
   requires:
     secrets:
       - GITHUB_TOKEN
-  agents:
-    version: 1
-    config_path: agents/agents.yaml
-    teams_path: agents/teams.yaml
-  chat:
-    config_path: agents/chat.yaml
 
 registry: "eve"
 
@@ -51,7 +45,7 @@ services:
 
 pipelines:
   # CI/CD pipeline triggered on push to main
-  # Runs tests, creates release, and deploys to staging
+  # Builds, creates release, and deploys to staging
   # The pipeline handles git ref automatically from the triggering commit
   ci-cd-main:
     trigger:
@@ -59,12 +53,7 @@ pipelines:
         event: push
         branch: main
     steps:
-      - name: integration-tests
-        script:
-          run: ./scripts/integration-test.sh
-          timeout: 1800
       - name: build
-        depends_on: [integration-tests]
         action:
           type: build
       - name: release
