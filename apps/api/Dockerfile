@@ -7,7 +7,10 @@ LABEL org.opencontainers.image.description="Eve Horizon starter API"
 
 WORKDIR /app
 
-COPY package.json index.js ./
+COPY package.json package-lock.json ./
+RUN npm ci --production
+
+COPY index.js db.js ./
 COPY public ./public
 
 EXPOSE 3000

@@ -2,13 +2,9 @@ import fs from 'fs/promises';
 import http from 'http';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { query } from './db.js';
 
 const PORT = process.env.PORT || 3000;
-
-const store = {
-  nextId: 1,
-  todos: new Map(),
-};
 
 const PUBLIC_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
 
@@ -249,36 +245,61 @@ const parseId = (segment) => {
   return id;
 };
 
-const listTodos = () => Array.from(store.todos.values());
+const toJson = (row) => ({
+  id: row.id,
+  title: row.title,
+  completed: row.completed,
+  createdAt: row.created_at.toISOString(),
+  updatedAt: row.updated_at.toISOString(),
+});
 
-const createTodo = (title) => {
-  const now = new Date().toISOString();
-  const todo = {
-    id: store.nextId,
-    title,
-    completed: false,
-    createdAt: now,
-    updatedAt: now,
-  };
-  store.todos.set(store.nextId, todo);
-  store.nextId += 1;
-  return todo;
+const listTodos = async () => {
+  const { rows } = await query('SELECT * FROM todos ORDER BY id');
+  return rows.map(toJson);
 };
 
-const updateTodo = (todo, patch) => {
-  const now = new Date().toISOString();
-  const next = {
-    ...todo,
-    ...patch,
-    updatedAt: now,
-  };
-  store.todos.set(todo.id, next);
-  return next;
+const getTodo = async (id) => {
+  const { rows } = await query('SELECT * FROM todos WHERE id = $1', [id]);
+  return rows[0] ? toJson(rows[0]) : null;
+};
+
+const createTodo = async (title) => {
+  const { rows } = await query(
+    'INSERT INTO todos (title) VALUES ($1) RETURNING *',
+    [title],
+  );
+  return toJson(rows[0]);
+};
+
+const updateTodo = async (id, patch) => {
+  const sets = [];
+  const values = [];
+  let i = 1;
+  if (patch.title !== undefined) {
+    sets.push(`title = $${i++}`);
+    values.push(patch.title);
+  }
+  if (patch.completed !== undefined) {
+    sets.push(`completed = $${i++}`);
+    values.push(patch.completed);
+  }
+  sets.push(`updated_at = now()`);
+  values.push(id);
+  const { rows } = await query(
+    `UPDATE todos SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`,
+    values,
+  );
+  return rows[0] ? toJson(rows[0]) : null;
+};
+
+const deleteTodo = async (id) => {
+  const { rowCount } = await query('DELETE FROM todos WHERE id = $1', [id]);
+  return rowCount > 0;
 };
 
 const handleTodosCollection = async (req, res) => {
   if (req.method === 'GET') {
-    sendJson(res, 200, listTodos());
+    sendJson(res, 200, await listTodos());
     return;
   }
 
@@ -293,7 +314,7 @@ const handleTodosCollection = async (req, res) => {
       sendJson(res, 400, { error: '"title" cannot be empty.' });
       return;
     }
-    const todo = createTodo(title);
+    const todo = await createTodo(title);
     sendJson(res, 201, todo);
     return;
   }
@@ -304,13 +325,12 @@ const handleTodosCollection = async (req, res) => {
 };
 
 const handleTodoItem = async (req, res, id) => {
-  const todo = store.todos.get(id);
-  if (!todo) {
-    sendJson(res, 404, { error: 'Todo not found.' });
-    return;
-  }
-
   if (req.method === 'GET') {
+    const todo = await getTodo(id);
+    if (!todo) {
+      sendJson(res, 404, { error: 'Todo not found.' });
+      return;
+    }
     sendJson(res, 200, todo);
     return;
   }
@@ -344,13 +364,21 @@ const handleTodoItem = async (req, res, id) => {
       return;
     }
 
-    const next = updateTodo(todo, updates);
+    const next = await updateTodo(id, updates);
+    if (!next) {
+      sendJson(res, 404, { error: 'Todo not found.' });
+      return;
+    }
     sendJson(res, 200, next);
     return;
   }
 
   if (req.method === 'DELETE') {
-    store.todos.delete(id);
+    const deleted = await deleteTodo(id);
+    if (!deleted) {
+      sendJson(res, 404, { error: 'Todo not found.' });
+      return;
+    }
     sendEmpty(res, 204);
     return;
   }
@@ -425,9 +453,8 @@ export const createServer = () =>
     sendJson(res, 404, { error: 'Not Found' });
   });
 
-export const resetStore = () => {
-  store.nextId = 1;
-  store.todos = new Map();
+export const resetStore = async () => {
+  await query('TRUNCATE todos RESTART IDENTITY');
 };
 
 const startServer = () => {

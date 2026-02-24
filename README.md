@@ -112,6 +112,20 @@ This repo is a starting point. Once you pick your real domain and tech stack, tr
 
 Local development is intended to run via Docker Compose, and then be transposed into `.eve/manifest.yaml` for deployment to a remote Eve cluster (staging by default).
 
+## Database
+
+The starter uses Postgres for persistent storage. `docker compose up --build` starts Postgres, runs migrations via [eve-migrate](https://github.com/Incept5/eve-migrate), then starts the API.
+
+Migrations live in `db/migrations/` as timestamped SQL files.
+
+For direct local development (without Docker Compose), set:
+
+```bash
+export DATABASE_URL=postgres://app:app@localhost:5432/eve_starter
+```
+
+On Eve, the managed database URL is injected automatically via `${managed.db.url}`.
+
 ## API Overview
 
 The starter API exposes a minimal todos service:
@@ -152,12 +166,11 @@ eve auth sync
 cp secrets.env.example secrets.env
 eve secrets import --org org_xxx --file ./secrets.env
 
-# Run the API with UI locally (Compose)
+# Run locally (Postgres + migrations + API)
 docker compose up --build
 
-# Run the API with UI locally (direct)
-cd apps/api
-npm start
+# Run API directly (requires local Postgres on 5432)
+DATABASE_URL=postgres://app:app@localhost:5432/eve_starter node apps/api/index.js
 
 # Deploy to environments (requires --ref with 40-char SHA or ref resolved against --repo-dir)
 eve env deploy sandbox --ref main --repo-dir .

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { createServer, resetStore } from '../index.js';
+import { close } from '../db.js';
 
 const startServer = () =>
   new Promise((resolve) => {
@@ -13,7 +14,7 @@ const startServer = () =>
   });
 
 test('todos CRUD flow', async () => {
-  resetStore();
+  await resetStore();
   const { server, baseUrl } = await startServer();
 
   try {
@@ -62,5 +63,6 @@ test('todos CRUD flow', async () => {
     assert.deepEqual(await listAfterDelete.json(), []);
   } finally {
     server.close();
+    await close();
   }
 });
