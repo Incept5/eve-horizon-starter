@@ -18,6 +18,7 @@ registry: "eve"
 environments:
   sandbox:
     type: persistent
+    pipeline: deploy-sandbox
 
 # Service definitions - the services that make up your application
 services:
@@ -77,5 +78,5 @@ pipelines:
       - name: migrate
         depends_on: [deploy]
         action:
-          type: run
+          type: job
           service: migrate
