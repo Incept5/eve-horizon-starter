@@ -2,5 +2,5 @@
 set -euo pipefail
 
 echo "[on-clone] Installing skills..."
-eve-worker skills install
+eve skills install
 echo "[on-clone] Complete"
