@@ -1,6 +1,6 @@
 # Eve Horizon Manifest (v2)
 # This file defines your application's deployment configuration
-# Learn more: https://github.com/Incept5/eve-horizon
+# Learn more: https://github.com/eve-horizon/eve-horizon
 
 schema: eve/compose/v2
 project: eve-starter
